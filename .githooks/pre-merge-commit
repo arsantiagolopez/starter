@@ -1,0 +1,29 @@
+#!/bin/bash
+
+# Pre-merge commit hook
+# Runs security review before allowing merge to main
+
+# Only run on merges to main
+if [ "$GIT_REFLOG_ACTION" = "merge" ]; then
+    TARGET_BRANCH=$(git symbolic-ref HEAD 2>/dev/null | sed 's/refs\/heads\///')
+    
+    if [ "$TARGET_BRANCH" = "main" ]; then
+        echo "🔒 Running security review before merge to main..."
+        
+        # Run the security review script
+        if [ -f "./scripts/security-review.sh" ]; then
+            ./scripts/security-review.sh
+            
+            if [ $? -ne 0 ]; then
+                echo "❌ Merge cancelled: Security review failed or not completed"
+                exit 1
+            fi
+        else
+            echo "⚠️  Security review script not found at ./scripts/security-review.sh"
+            echo "Run: ./scripts/security-review.sh before merging"
+            exit 1
+        fi
+    fi
+fi
+
+exit 0
