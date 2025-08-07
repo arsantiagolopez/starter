@@ -1,0 +1,132 @@
+name: Security Review Reminder
+
+on:
+  pull_request:
+    types: [opened, reopened, synchronize]
+    branches: [main]
+
+jobs:
+  security-reminder:
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+      
+    steps:
+      - name: Check if reminder already posted
+        id: check_comment
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number
+            });
+            
+            const reminderExists = comments.some(comment => 
+              comment.body.includes('Security Review Reminder') && 
+              comment.user.type === 'Bot'
+            );
+            
+            return !reminderExists;
+          result-encoding: string
+
+      - name: Post security review reminder
+        if: steps.check_comment.outputs.result == 'true'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: `## 🔒 Security Review Reminder
+
+Before merging this PR, please complete a security review:
+
+### Automated Checks
+Run the local security script:
+\`\`\`bash
+./scripts/security-review.sh
+\`\`\`
+
+### Claude Code Review
+1. Open this PR in Claude Code
+2. Run the command: \`/security-review\`
+3. Address any security concerns raised
+
+### Security Checklist
+- [ ] No exposed secrets or API keys
+- [ ] No hardcoded credentials
+- [ ] Dependencies reviewed for vulnerabilities
+- [ ] Environment variables properly handled
+- [ ] File permissions are appropriate
+- [ ] Claude Code security review completed
+
+---
+*This is an automated reminder. Complete the security review before merging to main.*`
+            });
+
+      - name: Run basic security checks
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { data: files } = await github.rest.pulls.listFiles({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: context.issue.number
+            });
+            
+            let warnings = [];
+            
+            // Check for potential secrets in file names
+            const sensitivePatterns = [
+              /\.env$/,
+              /\.pem$/,
+              /\.key$/,
+              /\.p12$/,
+              /credentials/i,
+              /secret/i,
+              /password/i
+            ];
+            
+            files.forEach(file => {
+              sensitivePatterns.forEach(pattern => {
+                if (pattern.test(file.filename)) {
+                  warnings.push(`⚠️ Sensitive file detected: ${file.filename}`);
+                }
+              });
+            });
+            
+            // Check for changes to security-related files
+            const securityFiles = [
+              '.github/workflows',
+              'package.json',
+              'package-lock.json',
+              '.gitignore',
+              'security',
+              'auth'
+            ];
+            
+            files.forEach(file => {
+              securityFiles.forEach(secFile => {
+                if (file.filename.includes(secFile)) {
+                  warnings.push(`📋 Security-related file modified: ${file.filename}`);
+                }
+              });
+            });
+            
+            if (warnings.length > 0) {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body: `## ⚠️ Automated Security Notices
+
+The following items require extra attention during security review:
+
+${warnings.map(w => `- ${w}`).join('\n')}
+
+Please ensure these changes are intentional and secure.`
+              });
+            }
