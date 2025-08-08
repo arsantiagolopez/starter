@@ -11,6 +11,7 @@
     "lint": "eslint ."
   },
   "dependencies": {
+    "@starter/navigation": "workspace:*",
     "@starter/ui": "workspace:*",
     "expo-router": "^5.1.4"
   },

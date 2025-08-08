@@ -5,5 +5,4 @@ export { Pressable, type PressableProps } from './primitives/pressable/index.nat
 export { Button, buttonVariants, type ButtonProps } from './components/button/index.native'
 export { Badge, badgeVariants, type BadgeProps } from './components/badge/index.native'
 export { Card, CardHeader, CardFooter, CardTitle, CardDescription, CardContent } from './components/card/index.native'
-export { Link, type LinkProps } from './components/link/index.native'
 export { cn } from './lib/utils'

@@ -1,12 +1,12 @@
-import * as React from "react"
-import { Button, View, Text, Card, CardHeader, CardTitle, CardDescription, CardContent, Link } from "@starter/ui"
+import { Button, View, Text, Card, CardHeader, CardTitle, CardDescription, CardContent } from "@starter/ui"
+import { Link, useNavigate } from "@starter/navigation"
 
 export function AboutScreen() {
+  const navigate = useNavigate()
+  
   return (
     <View className="p-4">
-      <Link href="/" className="inline-block mb-4">
-        ← Back to Home
-      </Link>
+      <Link.Back className="inline-block mb-4" />
       
       <Text className="text-2xl font-bold mb-6">About Our Universal Design System</Text>
       
@@ -41,9 +41,18 @@ export function AboutScreen() {
           <Text className="mb-2">🎨 <Text className="font-semibold">UI:</Text> Universal components with platform-specific rendering</Text>
           <Text className="mb-4">🏗️ <Text className="font-semibold">Architecture:</Text> Monorepo with Turborepo</Text>
           
-          <Button onPress={() => alert("This button works on both platforms!")}>
-            Test Universal Button
-          </Button>
+          <View className="gap-2">
+            <Button onPress={() => alert("This button works on both platforms!")}>
+              Test Universal Button
+            </Button>
+            
+            <Button 
+              variant="outline"
+              onPress={() => navigate("/", { replace: true })}
+            >
+              Navigate Home (useNavigate hook)
+            </Button>
+          </View>
         </CardContent>
       </Card>
     </View>

@@ -23,6 +23,9 @@ importers:
       '@starter/app':
         specifier: workspace:*
         version: link:../../packages/app
+      '@starter/navigation':
+        specifier: workspace:*
+        version: link:../../packages/navigation
       '@starter/ui':
         specifier: workspace:*
         version: link:../../packages/ui
@@ -96,6 +99,9 @@ importers:
       '@starter/app':
         specifier: workspace:*
         version: link:../../packages/app
+      '@starter/navigation':
+        specifier: workspace:*
+        version: link:../../packages/navigation
       '@starter/ui':
         specifier: workspace:*
         version: link:../../packages/ui
@@ -145,12 +151,37 @@ importers:
 
   packages/app:
     dependencies:
+      '@starter/navigation':
+        specifier: workspace:*
+        version: link:../navigation
       '@starter/ui':
         specifier: workspace:*
         version: link:../ui
       expo-router:
         specifier: ^5.1.4
         version: 5.1.4(g3jszhwhxcy6e5i7obabvmtnae)
+    devDependencies:
+      '@types/react':
+        specifier: ^19.0.14
+        version: 19.0.14
+      react:
+        specifier: ^19.0.0
+        version: 19.0.0
+      react-native:
+        specifier: 0.79.5
+        version: 0.79.5(@babel/core@7.28.0)(@types/react@19.0.14)(react@19.0.0)
+      typescript:
+        specifier: ^5.9.2
+        version: 5.9.2
+
+  packages/navigation:
+    dependencies:
+      expo-router:
+        specifier: ^5.1.4
+        version: 5.1.4(g3jszhwhxcy6e5i7obabvmtnae)
+      react-router:
+        specifier: ^7.7.1
+        version: 7.7.1(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
     devDependencies:
       '@types/react':
         specifier: ^19.0.14

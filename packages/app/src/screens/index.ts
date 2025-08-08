@@ -1,2 +1,2 @@
-export { HomeScreen } from './HomeScreen'
-export { AboutScreen } from './AboutScreen'
+export { HomeScreen } from './home-screen'
+export { AboutScreen } from './about-screen'

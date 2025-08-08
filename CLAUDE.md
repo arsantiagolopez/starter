@@ -46,6 +46,26 @@ Before writing ANY code, you MUST:
 - Testing patterns and approaches
 - Documentation styles
 
+## File Naming Conventions
+
+**IMPORTANT**: Use kebab-case for ALL TypeScript/JavaScript files:
+- ✅ `use-navigate.tsx` (correct)
+- ✅ `home-screen.tsx` (correct)
+- ✅ `button.native.tsx` (correct)
+- ❌ `useNavigate.tsx` (incorrect - avoid camelCase)
+- ❌ `HomeScreen.tsx` (incorrect - avoid PascalCase)
+
+This applies to:
+- Component files
+- Hook files
+- Utility files
+- Test files
+- Type definition files
+
+Exceptions:
+- Configuration files that require specific names (package.json, tsconfig.json, etc.)
+- README.md and other documentation files
+
 ## What NOT to Do
 
 - ❌ Don't suggest "better" ways to organize code

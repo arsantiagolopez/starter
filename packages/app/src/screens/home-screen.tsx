@@ -1,5 +1,5 @@
-import * as React from "react"
-import { Button, View, Text, Card, CardHeader, CardTitle, CardDescription, CardContent, Link } from "@starter/ui"
+import { Button, View, Text, Card, CardHeader, CardTitle, CardDescription, CardContent } from "@starter/ui"
+import { Link } from "@starter/navigation"
 
 export function HomeScreen() {
   return (
@@ -27,7 +27,7 @@ export function HomeScreen() {
             
             <View className="pt-4">
               <Text className="mb-2 font-semibold">Navigation Examples:</Text>
-              <Link href="/about" className="block py-2">
+              <Link to="/about" className="block py-2">
                 → Go to About Page (universal navigation)
               </Link>
             </View>
