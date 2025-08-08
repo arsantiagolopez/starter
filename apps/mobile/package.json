@@ -12,8 +12,10 @@
     "lint": "eslint ."
   },
   "dependencies": {
+    "@starter/app": "workspace:*",
     "@starter/ui": "workspace:*",
     "expo": "~53.0.20",
+    "expo-router": "^5.1.4",
     "expo-status-bar": "~2.2.3",
     "nativewind": "^4.1.23",
     "react": "19.0.0",
