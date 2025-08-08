@@ -1,0 +1,28 @@
+{
+  "name": "@starter/app",
+  "version": "0.0.0",
+  "main": "./src/screens/index.ts",
+  "types": "./src/screens/index.ts",
+  "exports": {
+    "./screens": "./src/screens/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint ."
+  },
+  "dependencies": {
+    "@starter/navigation": "workspace:*",
+    "@starter/ui": "workspace:*",
+    "expo-router": "^5.1.4"
+  },
+  "devDependencies": {
+    "@types/react": "^19.0.14",
+    "react": "^19.0.0",
+    "react-native": "0.79.5",
+    "typescript": "^5.9.2"
+  },
+  "peerDependencies": {
+    "react": ">=18",
+    "react-native": "*"
+  }
+}
