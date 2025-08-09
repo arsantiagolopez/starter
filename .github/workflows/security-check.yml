@@ -1,0 +1,107 @@
+name: Security Check
+
+on:
+  pull_request:
+    types: [opened, reopened, synchronize]
+    branches: [main]
+
+jobs:
+  security-check:
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+      contents: read
+      
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Check for sensitive files
+        id: check_sensitive
+        run: |
+          echo "Checking for sensitive files..."
+          
+          # Check for potentially sensitive files
+          sensitive_files=$(find . -type f \( \
+            -name "*.env" -o \
+            -name "*.pem" -o \
+            -name "*.key" -o \
+            -name "*.p12" -o \
+            -name "*credentials*" -o \
+            -name "*secret*" -o \
+            -name "*password*" \
+          \) 2>/dev/null | grep -v node_modules | grep -v .git || true)
+          
+          if [ ! -z "$sensitive_files" ]; then
+            echo "⚠️ Found potentially sensitive files:"
+            echo "$sensitive_files"
+            echo "sensitive_found=true" >> $GITHUB_OUTPUT
+          else
+            echo "✅ No sensitive files detected"
+            echo "sensitive_found=false" >> $GITHUB_OUTPUT
+          fi
+          
+      - name: Check for exposed secrets
+        run: |
+          echo "Checking for exposed secrets in code..."
+          
+          # Basic pattern matching for common secret patterns
+          # This is a simple check - consider using tools like trufflehog for production
+          
+          patterns=(
+            "api[_-]?key.*=.*['\"][^'\"]{20,}['\"]"
+            "secret.*=.*['\"][^'\"]{20,}['\"]"
+            "token.*=.*['\"][^'\"]{20,}['\"]"
+            "password.*=.*['\"][^'\"]{8,}['\"]"
+          )
+          
+          found_secrets=false
+          for pattern in "${patterns[@]}"; do
+            if grep -r -i -E "$pattern" . --exclude-dir=node_modules --exclude-dir=.git 2>/dev/null; then
+              found_secrets=true
+            fi
+          done
+          
+          if [ "$found_secrets" = true ]; then
+            echo "::error::Potential secrets found in code. Please review and use environment variables instead."
+            exit 1
+          else
+            echo "✅ No hardcoded secrets detected"
+          fi
+          
+      - name: Post security reminder comment
+        if: github.event.action == 'opened'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number
+            });
+            
+            const reminderExists = comments.some(comment => 
+              comment.body.includes('Security Review Checklist') && 
+              comment.user.type === 'Bot'
+            );
+            
+            if (!reminderExists) {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body: `## 🔒 Security Review Checklist
+            
+            Before merging this PR, please ensure:
+            
+            - [ ] No exposed secrets or API keys in code
+            - [ ] No hardcoded credentials
+            - [ ] Sensitive data uses environment variables
+            - [ ] Dependencies reviewed for vulnerabilities
+            - [ ] File permissions are appropriate
+            - [ ] No sensitive files committed (.env, .pem, .key, etc.)
+            
+            ---
+            *This is an automated security reminder for all PRs to main.*`
+              });
+            }
