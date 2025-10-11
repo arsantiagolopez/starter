@@ -1,6 +1,6 @@
-# Portfolio
+# Starter
 
-A modern, full-stack portfolio application built with React Router 7, featuring a scalable design system and comprehensive dark mode support.
+A modern, full-stack starter application built with React Router 7, featuring a scalable design system and comprehensive dark mode support.
 
 ## Tech Stack
 
@@ -74,6 +74,7 @@ docs/                 # Documentation
 ## Design System
 
 The application uses a modular design system built on:
+
 - CSS custom properties for theming
 - OKLCH color space for perceptual uniformity
 - Semantic color tokens that adapt to light/dark modes
@@ -84,6 +85,7 @@ See [Design System Documentation](./docs/design-system.md) for details.
 ## Dark Mode
 
 Features a hybrid dark mode implementation:
+
 - Automatic system theme detection
 - Manual theme selection (light/dark/system)
 - Live updates when OS theme changes
@@ -95,11 +97,12 @@ Features a hybrid dark mode implementation:
 ### Docker
 
 ```bash
-docker build -t portfolio .
-docker run -p 3000:3000 portfolio
+docker build -t starter .
+docker run -p 3000:3000 starter
 ```
 
 Compatible with:
+
 - AWS ECS
 - Google Cloud Run
 - Azure Container Apps
